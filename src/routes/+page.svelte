@@ -1,6 +1,7 @@
 <script lang="ts">
     import Authorize from '../lib/authorization.svelte';
     import RecentlyPlayedAnalytics from '../lib/recently_played_analytics.svelte';
+    import PlaylistList from '../lib/PlaylistList.svelte';
     import { AUTHENTICATED } from '../store';
 
     let authenticated_local: boolean;
@@ -18,6 +19,8 @@
 {:else}
 <h2>Authenticated!</h2>
 <RecentlyPlayedAnalytics />
+
+<PlaylistList />
 {/if}
 
 <style>
