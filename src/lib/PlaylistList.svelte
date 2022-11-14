@@ -74,15 +74,16 @@
         color: var(--text-color);
         font-family: "Open Sans", sans-serif;
         font-weight: normal;
-        font-size: 12px;
-        overflow: visible;
-        overflow-wrap: break-word;
-        word-wrap: break-all;
+        font-size: 14px;
+        overflow: wrap;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
     }
     div.playlistDescText {
         width: 200px;
         height: 100;
-        border: 2px solid red;
+        word-wrap: break-word;
+        white-space: normal;
     }
 
     div.playlistlist {
