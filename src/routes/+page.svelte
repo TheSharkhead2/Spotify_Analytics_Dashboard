@@ -13,6 +13,7 @@
 
 </script>    
 
+
 <h1>This is app</h1>
 {#if authenticated_local === false}
 <Authorize />
@@ -28,6 +29,7 @@
        --background-color: #222222;
        --text-color: #e6e6e6;
        --component-background-color: #454545;
+       --accent-color: #0798f8;
     }
     :global(body) {
         background-color: var(--background-color);
@@ -42,5 +44,15 @@
         background-color: var(--component-background-color);
         border-radius: 35px;
         padding: 20px;
+    }
+
+    :global(html, body) {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    :global(html::-webkit-scrollbar, body::-webkit-scrollbar) {
+        /* hide scrollbar */
+        display: none;
     }
 </style>

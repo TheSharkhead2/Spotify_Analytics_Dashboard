@@ -17,18 +17,18 @@ pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String,
         let user_playlists = state.inner().get_current_users_playlists(Some(50), Some(offset)); // get chunk of playlists 
 
         match user_playlists {
-            Ok(user_playlists) => {
+            Ok(mut user_playlists) => {
                 total = user_playlists.total; // update total number of playlists user has
                 offset += 50; // update offset for getting playlists
 
                 playlists.append(&mut user_playlists.items); // add chunk of playlists to vector of playlists
             },
-            Err(_) => {}, // do nothing on error (don't add to playlists vector, simply allow empty vector to be returned)
+            Err(e) => {println!("Error: {:?}", e)}, // do nothing on error (don't add to playlists vector, simply allow empty vector to be returned)
         }
     }
 
     let trimmed_playlists: Vec<(String, String, String)> = playlists.iter().map(|playlist| {
-        (playlist.name, match playlist.description {Some(description) => description, None => String::new()}, playlist.images[0].url) // tuple of playlist name, description, and image url 
+        (String::from(&playlist.name), match &playlist.description {Some(description) => String::from(description), None => String::new()}, String::from(&playlist.images[0].url)) // tuple of playlist name, description, and image url 
     }).collect();
 
     trimmed_playlists
