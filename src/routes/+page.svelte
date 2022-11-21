@@ -2,7 +2,8 @@
     import Authorize from '../lib/authorization.svelte';
     import RecentlyPlayedAnalytics from '../lib/recently_played_analytics.svelte';
     import PlaylistList from '../lib/PlaylistList.svelte';
-    import { AUTHENTICATED } from '../store';
+    import PlaylistDetailed from '../lib/PlaylistDetailed.svelte';
+    import { AUTHENTICATED, PLAYLIST_DISPLAY, PLAYLIST_DISPLAY_ID } from '../store';
 
     let authenticated_local: boolean;
 
@@ -11,17 +12,32 @@
         authenticated_local = value;
     });
 
+    let playlist_display_local: boolean; 
+    let playlist_display_id_local: string; 
+
+    // update playlist state locally when it is changed 
+    PLAYLIST_DISPLAY.subscribe(value => {
+        playlist_display_local = value;
+    });
+
+    PLAYLIST_DISPLAY_ID.subscribe(value => {
+        playlist_display_id_local = value;
+    });
+
 </script>    
 
 
-<h1>This is app</h1>
 {#if authenticated_local === false}
-<Authorize />
+    <Authorize />   
 {:else}
-<h2>Authenticated!</h2>
-<RecentlyPlayedAnalytics />
+    {#if playlist_display_local === false}
+        <h2>Authenticated!</h2>
+        <RecentlyPlayedAnalytics />
 
-<PlaylistList />
+        <PlaylistList />
+    {:else}
+        <PlaylistDetailed playlist_id={playlist_display_id_local} />
+    {/if}
 {/if}
 
 <style>
@@ -54,5 +70,15 @@
     :global(html::-webkit-scrollbar, body::-webkit-scrollbar) {
         /* hide scrollbar */
         display: none;
+    }
+
+    :global(.basic-text) {
+        color: var(--text-color);
+        font-family: "Open Sans", sans-serif;
+        font-weight: normal;
+        font-size: 16px;
+        overflow: wrap;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
     }
 </style>

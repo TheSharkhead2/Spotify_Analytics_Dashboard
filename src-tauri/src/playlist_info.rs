@@ -7,7 +7,7 @@ use tauri::State;
 /// Returns a vector of tuples containing the playlist name, description, and image url
 /// 
 #[tauri::command]
-pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String, String)> {
+pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String, String, String)> {
     let mut playlists: Vec<Playlist> = Vec::new(); // vector of playlists
 
     let mut offset: i32 = 0; // offset for getting playlists 
@@ -27,8 +27,8 @@ pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String,
         }
     }
 
-    let trimmed_playlists: Vec<(String, String, String)> = playlists.iter().map(|playlist| {
-        (String::from(&playlist.name), match &playlist.description {Some(description) => String::from(description), None => String::new()}, String::from(&playlist.images[0].url)) // tuple of playlist name, description, and image url 
+    let trimmed_playlists: Vec<(String, String, String, String)> = playlists.iter().map(|playlist| {
+        (String::from(&playlist.name), match &playlist.description {Some(description) => String::from(description), None => String::new()}, String::from(&playlist.images[0].url), String::from(&playlist.id)) // tuple of playlist name, description, image url, and id 
     }).collect();
 
     trimmed_playlists

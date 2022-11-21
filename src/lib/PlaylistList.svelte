@@ -3,11 +3,11 @@
 
     import VirtualList from 'svelte-tiny-virtual-list';;
 
-    import { STYLE } from '../store';
+    import { STYLE, PLAYLIST_DISPLAY, PLAYLIST_DISPLAY_ID } from '../store';
 
     // function to insure correct typing when requesting playlist data from backend 
-    async function getUserPlaylists(): Promise<Array<[string, string, string]>> {
-        let raw_playlists: Array<[string, string, string]> = await invoke('get_all_playlist_tiles')
+    async function getUserPlaylists(): Promise<Array<[string, string, string, string]>> {
+        let raw_playlists: Array<[string, string, string, string]> = await invoke('get_all_playlist_tiles')
             .then((data) => {
                 if (Array.isArray(data) 
                 && data.every(element => Array.isArray(element) 
@@ -16,7 +16,7 @@
                 } else {
                     console.log("invalid data from backend");
                     
-                    let dummy: Array<[string, string, string]> = [["", "", ""]]; // dummy array to insure type coherence 
+                    let dummy: Array<[string, string, string, string]> = [["", "", "", ""]]; // dummy array to insure type coherence 
 
                     return dummy;
                 }
@@ -24,7 +24,13 @@
         return raw_playlists;
     }
 
-    let user_playlists: Promise<Array<[string, string, string]>> = getUserPlaylists(); // call to backend to get data 
+    let user_playlists: Promise<Array<[string, string, string, string]>> = getUserPlaylists(); // call to backend to get data 
+
+    function handlePlaylistClick(playlistID: string) {
+        console.log(playlistID);
+        PLAYLIST_DISPLAY.set(true);
+        PLAYLIST_DISPLAY_ID.set(playlistID);
+    }
 
 </script>
 
@@ -34,7 +40,7 @@
             {#await user_playlists then playlists}
                 {#each playlists as playlist, _}
                     <td>
-                        <div class="playlistTile">  
+                        <div class="playlistTile" on:click={() => handlePlaylistClick(playlist[3])} on:keydown={(event) => console.log(event.key)}> <!-- keydown event is currently only here to supress error -->  
                             <svg width=450 height=200>
                                 
                                 <!-- <text x=200 y=45 class=playlistTitleText> {playlist[0]} </text> -->
