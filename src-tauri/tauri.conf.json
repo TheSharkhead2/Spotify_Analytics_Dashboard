@@ -59,10 +59,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 900,
         "resizable": true,
         "title": "Spotify Analytics Dashboard",
-        "width": 800
+        "width": 1500
       }
     ]
   }

@@ -1,5 +1,7 @@
-use spotifyrs::{Spotify, Playlist}; 
+use spotifyrs::{Spotify, Playlist, SpotifyError, Track, FeatureTrack}; 
 use tauri::State;
+
+use crate::analysis::get_song_features;
 
 /// Get information for producing playlist "tiles" for all user's playlists. 
 /// Tiles are essentially a small preview of the playlist. 
@@ -23,7 +25,7 @@ pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String,
 
                 playlists.append(&mut user_playlists.items); // add chunk of playlists to vector of playlists
             },
-            Err(e) => {println!("Error: {:?}", e)}, // do nothing on error (don't add to playlists vector, simply allow empty vector to be returned)
+            Err(e) => {println!("Error: {:?}", e); break}, // do nothing on error (don't add to playlists vector, simply allow empty vector to be returned)
         }
     }
 
@@ -32,4 +34,51 @@ pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String,
     }).collect();
 
     trimmed_playlists
+}
+
+/// Get all tracks for specified playlist (could need to convert to dynamically grabbing for massive playlists) 
+/// and get track features
+/// 
+fn get_playlist_tracks(state: State<'_, Spotify>, playlist_id: String) -> () {
+    let mut tracks: Vec<(Track, FeatureTrack)> = Vec::new(); // vector of tracks and features 
+
+    let mut offset: i32 = 0; // offset for getting tracks
+    let mut total: i32 = 101; // total number of tracks in playlist. Start at 51 to enter while loop at least once
+    while offset+100 < total {
+        let playlist_tracks = state.inner().get_playlist_tracks(&playlist_id, None, Some(100), Some(offset)); // get chunk of tracks
+
+        match playlist_tracks {
+            Ok(mut playlist_tracks) => {
+                total = playlist_tracks.total; // update total number of tracks 
+                offset += 100; // update offset for getting tracks 
+
+                let mut track_ids: Vec<String> = Vec::new(); // vector of track ids for getting track features
+                for track in &playlist_tracks.items {
+                    track_ids.push(String::from(&track.track.id)); // strip track ids out 
+
+
+                }
+
+            },
+            Err(e) => {},
+        }
+
+    }
+
+}
+
+/// Get information on single playlist for detailed view 
+/// 
+#[tauri::command]
+pub fn get_playlist(state: State<'_, Spotify>, playlist_id: String) -> () {
+    let playlist: Result<Playlist, SpotifyError> = state.inner().get_playlist(&playlist_id, None);
+
+    // get playlist cover image and spotify url
+    let (playlist_image, spotify_url) = match playlist {
+        Ok(playlist) => {
+            (String::from(&playlist.images[0].url), String::from(&playlist.spotify_url)) // update image url
+        },
+        Err(e) => {println!("Error: {:?}", e); (String::new(), String::new())}, // do nothing on error (set image url to empty string)
+    };
+
 }

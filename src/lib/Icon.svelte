@@ -2,6 +2,7 @@
     This component is used to display an icon and is based on code found here: https://stackoverflow.com/questions/66069647/best-way-to-import-svg-icons-into-a-svelte-app
  -->
 <script lang="ts">
+    // icon data from: https://feathericons.com/?query=arrow
     const ICONS = [
         {
             box: 24, // icon size
