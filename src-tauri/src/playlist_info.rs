@@ -42,21 +42,20 @@ pub fn get_all_playlist_tiles(state: State<'_, Spotify>) -> Vec<(String, String,
 fn get_playlist_tracks(state: State<'_, Spotify>, playlist_id: String) -> () {
     let mut tracks: Vec<(Track, FeatureTrack)> = Vec::new(); // vector of tracks and features 
 
+    let mut track_objects: Vec<Track> = Vec::new(); // vector of just track objects
+    let mut track_ids: Vec<String> = Vec::new(); // vector of just track ids
     let mut offset: i32 = 0; // offset for getting tracks
     let mut total: i32 = 101; // total number of tracks in playlist. Start at 51 to enter while loop at least once
     while offset+100 < total {
         let playlist_tracks = state.inner().get_playlist_tracks(&playlist_id, None, Some(100), Some(offset)); // get chunk of tracks
 
         match playlist_tracks {
-            Ok(mut playlist_tracks) => {
+            Ok(playlist_tracks) => {
                 total = playlist_tracks.total; // update total number of tracks 
                 offset += 100; // update offset for getting tracks 
 
-                let mut track_ids: Vec<String> = Vec::new(); // vector of track ids for getting track features
                 for track in &playlist_tracks.items {
-                    track_ids.push(String::from(&track.track.id)); // strip track ids out 
-
-
+                    track_ids.push(format!("{}", &track.track.id)); // strip track ids out 
                 }
 
             },
